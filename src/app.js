@@ -80,52 +80,9 @@ app.post('/address', (req, res) => {
             .send('Zip must be exaclty 5 digits!')
     }
 
-
-
     console.log(contact)
-    // if (!firstName) {
-    //     return res
-    //         .status(400)
-    //         .send('First Name required!')
-    // }
-
-    // if (!lastName) {
-    //     return res
-    //         .status(400)
-    //         .send('Last Name required!')
-    // }
-
-    // if (!address1) {
-    //     return res
-    //         .status(400)
-    //         .send('Address required!')
-    // }
-
-    // if (!city) {
-    //     return res
-    //         .status(400)
-    //         .send('City required!')
-    // }
-
-    // if (!state) {
-    //     return res
-    //         .status(400)
-    //         .send('State is required!')
-    // }
-
-
-
-    // if (!zip) {
-    //     return res
-    //         .status(400)
-    //         .send('Zip is required!')
-    // }
-
-
 
     return res.status(201).send(contact)
-
-
 })
 
 
