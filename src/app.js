@@ -18,7 +18,7 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json())
 
-const contact = [
+const contacts = [
     {
         id: uuid(),
         "firstName": "String",
@@ -43,48 +43,82 @@ const contact = [
 ];
 
 app.get('/address', (req, res) => {
-    res.send(contact);
+    res.send(contacts);
 });
 
 app.post('/address', (req, res) => {
     const requiredKeys = ["firstName", "lastName", "address1", "city", "state", "zip"]
-    //const { firstName, lastName, address1, address2 = false, city, state, zip } = req.body;
+    const { firstName, lastName, address1, address2 = false, city, state, zip } = req.body;
     const optionalKeys = ["address2"]
 
-    let contact = {}
     for (let i = 0; i < requiredKeys.length; i++) {
         const key = requiredKeys[i]
         if (!req.body[key]) {
             return res.status(400).send(`${key} required!`)
         }
-        contact[key] = req.body[key]
+        contacts[key] = req.body[key]
     }
 
     for (let i = 0; i < optionalKeys.length; i++) {
         const key = optionalKeys[i]
         if (req.body[key]) {
-            contact[key] = req.body[key]
+            contacts[key] = req.body[key]
         }
     }
 
 
-    if (contact.state.length >= 3) {
+    if (contacts.state.length >= 3) {
         return res
             .status(400)
             .send('State must be exactly two characters!')
     }
 
-    if (contact.zip.length !== 5) {
+    if (contacts.zip.length !== 5) {
         return res
             .status(400)
             .send('Zip must be exaclty 5 digits!')
     }
 
-    console.log(contact)
+    const id = uuid();
+    const newContact = {
+        id,
+        firstName,
+        lastName,
+        address1,
+        address2,
+        city,
+        state,
+        zip
+    }
 
-    return res.status(201).send(contact)
+    contacts.push(newContact);
+
+    return res
+            .status(201)
+            .location(`http://localhost:8000/address/${id}`)
+            .json(newContact)
 })
 
+app.delete('/address/:id', (req, res) => {
+    
+    const { id } = req.params;
+    
+
+    const index = contacts.findIndex(contact => contact.id === id);
+
+    if (index === -1) {
+        return res
+          .status(404)
+          .send('User not found');
+      }
+      
+    contacts.splice(index, 1);
+    
+    res
+      .status(404)
+      .end();
+
+}) 
 
 app.use(function errorHandler(error, req, res, next) {
     let response;
